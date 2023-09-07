@@ -15,6 +15,7 @@
                             <li class="project-title">
                                 <a href="#">{{ $project->title }}
                                     <span class="project-year">{{ $project->getYearCreated() }}</span>
+                                    <span class="project-year">{{ $project->type->label }}</span>
                                 </a>
                             </li>
                         @empty
