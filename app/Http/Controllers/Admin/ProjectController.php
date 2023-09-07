@@ -125,6 +125,11 @@ class ProjectController extends Controller
     }
 
     $project->update($data);
+
+    if (Arr::exists($data, 'technologies')) $project->technologies()->sync($data['technologies']);
+    if (!Arr::exists($data, 'technologies') && count($project->technologies)) $project->technologies()->detach();
+
+
     return to_route('admin.projects.show', compact('project'))->with('type', 'success')->with('message', 'Il progetto è stato modificato con successo!');
   }
 
