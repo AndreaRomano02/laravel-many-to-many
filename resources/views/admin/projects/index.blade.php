@@ -14,6 +14,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Titolo</th>
                 <th scope="col">Tipo</th>
+                <th scope="col">Linguaggi</th>
                 <th scope="col">Descrizione</th>
                 <th scope="col">Link</th>
                 <th scope="col"></th>
@@ -36,6 +37,16 @@
                         @else
                             -
                         @endif
+                    </th>
+
+                    {{-- * Linguaggio --}}
+                    <th class="align-middle text-center py-5">
+                        @forelse ($project->technologies as $technology)
+                            <span class="badge rounded-pill me-2 mb-2"
+                                style="background-color:{{ $technology->color }}; font-size:1rem;">{{ $technology->label }}</span>
+
+                        @empty -
+                        @endforelse
                     </th>
 
                     {{-- * Descrizione --}}

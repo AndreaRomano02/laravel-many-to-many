@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Models\Project;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -30,7 +31,8 @@ class ProjectController extends Controller
   {
     $project = new Project();
     $types = Type::all();
-    return view('admin.projects.create', compact('project', 'types'));
+    $technologies = Technology::all();
+    return view('admin.projects.create', compact('project', 'types', 'technologies'));
   }
 
   /**
@@ -46,6 +48,7 @@ class ProjectController extends Controller
       'url' => 'url:http,https|nullable',
       'image' => 'image|nullable',
       'description' => 'required|string',
+      'technologies' => 'nullable|exists:technologies,id'
     ], [
       'title.required' => 'Il titolo è obbligatorio.',
       'type_id.exists' => 'Il campo inserito non esiste nel DB',
@@ -53,6 +56,7 @@ class ProjectController extends Controller
       'image.image' => 'Il file non è un immagine.',
       'description.required' => 'La descrizione è oblligatoria.',
       'description.string' => 'La descrizione deve essere una stringa.',
+      'technologies.exists' => 'Uno o più campi selezionati non sono validi.'
     ]);
 
     $data = $request->all();
@@ -63,6 +67,8 @@ class ProjectController extends Controller
     $project->fill($data);
 
     $project->save();
+
+    if (Arr::exists($data, 'technologies')) $project->technologies()->attach($data['technologies']);
 
     return to_route('admin.projects.show', compact('project'))->with('type', 'success')->with('message', 'Il progetto è stato creato con successo!');
   }
@@ -82,7 +88,10 @@ class ProjectController extends Controller
   public function edit(Project $project)
   {
     $types = Type::all();
-    return view('admin.projects.edit', compact('project', 'types'));
+    $technologies = Technology::all();
+    $project_technology_ids = $project->technologies->pluck('id')->toArray();
+
+    return view('admin.projects.edit', compact('project', 'types', 'technologies', 'project_technology_ids'));
   }
 
   /**
@@ -97,6 +106,7 @@ class ProjectController extends Controller
       'description' => 'required|string',
       'url' => 'url:http,https|nullable',
       'image' => 'image|nullable',
+      'technologies' => 'nullable|exists:technologies,id'
     ], [
       'title.required' => 'Il titolo è obbligatorio.',
       'type_id.exists' => 'Il campo inserito non esiste nel DB',
@@ -104,6 +114,7 @@ class ProjectController extends Controller
       'image.image' => 'Il file non è un immagine.',
       'description.required' => 'La descrizione è oblligatoria.',
       'description.string' => 'La descrizione deve essere una stringa.',
+      'technologies.exists' => 'Uno o più campi selezionati non sono validi.'
     ]);
 
     $data = $request->all();

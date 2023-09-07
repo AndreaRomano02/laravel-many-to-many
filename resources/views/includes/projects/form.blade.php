@@ -67,6 +67,18 @@
         {{ $errors->first('type_id') }}
     </div>
 </div>
+<div class="col-12">
+    @foreach ($technologies as $technology)
+        <div class="form-check form-check-inline my-5">
+            <input class="form-check-input" type="checkbox" value="{{ $technology->id }}"
+                @if (in_array($technology->id, old('technologies', $project_technology_ids ?? []))) checked @endif id="technology-{{ $technology->id }}"
+                name="technologies[]">
+            <label class="form-check-label" for="technology-{{ $technology->id }}">
+                {{ $technology->label }}
+            </label>
+        </div>
+    @endforeach
+</div>
 
 <div class="text-end">
     <button type="reset" class="btn btn-danger ">Reset</button>
